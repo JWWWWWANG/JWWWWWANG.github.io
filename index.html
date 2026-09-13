@@ -202,6 +202,7 @@
 <script>
 (function () {
   // ===== 可以随手改的部分 =====
+  var FILM_VIDEO = 'assets/video/index-loop.mp4';      // 幕布上放的视频，加载失败就退回下面生成的"电影"
   var WORDS = ['HELLO', 'WELCOME', 'TO MY ROOM', 'PORTFOLIO'];
   var NOISE = {
     grain: 0.12,        // 颗粒噪点
@@ -651,6 +652,26 @@
   var film = add(tv, new THREE.PlaneGeometry(1.56, 0.96), new THREE.MeshBasicMaterial({ map: filmTex }), fmP.x, fmP.y, fmP.z, false);
   film.rotation.y = scrRot;
   film.userData.glowMat = film.material;
+  // 幕布视频：静音自动循环，成功后替换画布贴图；投影光的取色也改从视频取
+  var filmVideo = null, useVideo = false;
+  if (FILM_VIDEO) {
+    filmVideo = document.createElement('video');
+    filmVideo.src = FILM_VIDEO; filmVideo.muted = true; filmVideo.loop = true; filmVideo.playsInline = true; filmVideo.preload = 'auto';
+    filmVideo.setAttribute('muted', ''); filmVideo.setAttribute('playsinline', '');
+    filmVideo.addEventListener('canplay', function () {
+      if (useVideo) return;
+      var vt = new THREE.VideoTexture(filmVideo);
+      vt.encoding = THREE.sRGBEncoding; vt.minFilter = THREE.LinearFilter; vt.magFilter = THREE.LinearFilter;
+      var ar = (filmVideo.videoWidth / filmVideo.videoHeight) || (16 / 9), planeAr = 1.56 / 0.96;
+      if (ar > planeAr) { vt.repeat.set(planeAr / ar, 1); vt.offset.set((1 - planeAr / ar) / 2, 0); }   // 视频比幕布宽就裁两边
+      film.material.map = vt; film.material.needsUpdate = true;
+      useVideo = true;
+      console.info('film video ready', filmVideo.videoWidth + 'x' + filmVideo.videoHeight);
+    });
+    var tryPlay = function () { var pr = filmVideo.play(); if (pr && pr.catch) pr.catch(function () {}); };
+    tryPlay();
+    container.addEventListener('pointerdown', tryPlay, { once: true });
+  }
   var scrA = scrPt(-0.55, 0.42, 0.06);
   addHotspot(tv, [1.62, 1.04, 0.12], [scrC.x, scrC.y, scrC.z], [scrA.x, scrA.y, scrA.z], HOTSPOTS.work, scrRot);
 
@@ -776,8 +797,9 @@
   var lightCol = new THREE.Color(1, 0.9, 0.75), targetCol = new THREE.Color(), hslTmp = { h: 0, s: 0, l: 0 };
   var spotBase = 2.0;
   function updateProjectorLight() {
-    avgX.drawImage(filmCanvas, 0, 0, 1, 1);
-    var d = avgX.getImageData(0, 0, 1, 1).data;
+    var d;
+    try { avgX.drawImage(useVideo ? filmVideo : filmCanvas, 0, 0, 1, 1); d = avgX.getImageData(0, 0, 1, 1).data; }
+    catch (err) { return; }
     targetCol.setRGB(d[0] / 255, d[1] / 255, d[2] / 255);
     targetCol.getHSL(hslTmp);
     targetCol.setHSL(hslTmp.h, Math.min(1, hslTmp.s * 1.5), 0.42 + hslTmp.l * 0.55);
@@ -1285,7 +1307,7 @@
 
     if (now - lastFilmFrame > 1000 / 12) {
       lastFilmFrame = now;
-      drawFilm(t, now);
+      if (!useVideo) drawFilm(t, now);
       updateProjectorLight();
     }
     if (now - lastOsd > 500) { lastOsd = now; updateOsd(t); }
