@@ -1,7 +1,9 @@
 # Jiawen Wang — portfolio
 
-首页 `index.html` 是 three.js 做的 IBM 3163 终端场景，子页面 `about.html`、`work.html`、`connect.html` 是占位模板。
+- `index.html` — three.js landing page (IBM 3163 terminal scene, noise/VHS post, hotspots).
+- `work.html` + `work/*.html` — 13 works migrated from the old Cargo site (text, stills, YouTube/Vimeo embeds).
+- `about.html`, `connect.html` — bio and links.
+- `assets/work/` — stills, resized to 1600px JPEG.
+- `tv-demo.html` — the landing scene with explanatory chrome.
 
-`tv-demo.html` 是带说明的演示版本。
-
-通过 GitHub Pages 发布，推送到 `main` 分支即上线。
+Published with GitHub Pages at https://jiawenwang-art.com (push to `main` = deploy).

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>No Signal — Jiawen Wang</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Major+Mono+Display&display=swap">
+<style>
+  :root { --ground:#02080a; --ink:#c8d2d0; --muted:#6f8a88; --yellow:#f2ec1a; --green:#00ffa6; --line:#12302c; }
+  html { color-scheme: dark; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:"VT323","SF Mono",Menlo,monospace; font-size:22px; line-height:1.45; }
+  a { color:var(--green); }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 24px 80px; display:grid; gap:28px; }
+  .top { display:flex; justify-content:space-between; align-items:baseline; gap:16px; font-size:20px; color:var(--muted); flex-wrap:wrap; }
+  .top nav { display:flex; gap:14px; flex-wrap:wrap; }
+  .top a { color:var(--green); text-decoration:none; border:2px dashed var(--green); padding:4px 10px; }
+  .top a:hover, .top a[aria-current] { background:rgba(0,255,166,0.14); }
+  h1 { margin:0; font-family:"Major Mono Display","VT323",monospace; font-weight:400; font-size:clamp(34px,6.5vw,84px); line-height:1; color:var(--yellow); letter-spacing:0.05em; text-wrap:balance; }
+  .meta { display:flex; gap:14px 22px; flex-wrap:wrap; color:var(--muted); font-size:20px; }
+  .meta b { color:var(--green); font-weight:400; }
+  .body { max-width:66ch; display:grid; gap:14px; }
+  .body p { margin:0; }
+  .rule { border-top:1px solid var(--line); }
+  .video { position:relative; aspect-ratio:16/9; background:#000; border:2px dashed var(--green); }
+  .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .stills { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .stills img { width:100%; height:auto; display:block; background:#000; }
+  .note { color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px; }
+  .card { display:grid; gap:10px; color:inherit; text-decoration:none; }
+  .card .thumb { aspect-ratio:16/10; overflow:hidden; background:#000; border:2px dashed transparent; }
+  .card .thumb img { width:100%; height:100%; object-fit:cover; display:block; filter:saturate(0.85); transition:filter .2s, transform .3s; }
+  .card:hover .thumb { border-color:var(--green); }
+  .card:hover .thumb img { filter:saturate(1.1); transform:scale(1.02); }
+  .card .num { color:var(--green); }
+  .card h2 { margin:0; font-family:"Major Mono Display","VT323",monospace; font-weight:400; font-size:26px; line-height:1.1; color:var(--yellow); }
+  .card .tags { color:var(--muted); font-size:19px; }
+  .pn { display:flex; justify-content:space-between; gap:16px; border-top:1px solid var(--line); padding-top:18px; font-size:20px; }
+  .pn a { text-decoration:none; border:2px dashed var(--green); padding:4px 10px; }
+  .pn a:hover { background:rgba(0,255,166,0.14); }
+  @media (max-width:560px) { body { font-size:19px; } .wrap { padding:18px 16px 60px; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <nav><a href="../index.html">&larr; home</a><a href="../work.html" aria-current="page">work</a><a href="../about.html">about</a><a href="../connect.html">connect</a></nav>
+    <span>Jiawen Wang</span>
+  </header>
+  <h1>No Signal</h1>
+  <div class="meta"><b>[002]</b><span>2025</span><span>Audio-Visual / Interactive Art / Laser Show / Real-Time Render</span></div>
+  <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/4QnSZLCXq4o" title="No Signal" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+  <section class="body"><p>No Signal (2025) is an audio-visual performance that merges real-time rendering with analog–digital signal experimentation. At its core, the piece investigates the liminal space where image and sound lose their coherence, collapse into noise, and then re-emerge as transformed patterns of perception.</p><p>The performance employs a self-built MIDI controller as an extension of the body, granting tactile control over visuals that move fluidly from distorted analog television signals to immersive projection environments and the precision of laser-based light drawings. This hybridity—between obsolete broadcast technologies and contemporary rendering engines—creates a dialogue between eras of media, asking what it means to manipulate “signal” in a culture saturated by transmission, interruption, and mediated presence.</p><p>By intervening in the flow of signal—interrupting, bending, and re-routing it—the work frames “no signal” not as absence, but as a site of generative potential. Static, glitches, and feedback loops become aesthetic materials, shaping a live landscape where error is not failure but composition.</p><p>Ultimately, No Signal (2025) is less a performance than a live circuitry of perception—where human gesture, machine instability, and technological memory entwine.</p></section>
+  <div class="rule"></div>
+  <section class="stills"><img src="../assets/work/img-3369.jpg" alt="No Signal still" loading="lazy" width="3840" height="2160"><img src="../assets/work/jiawen-00-02-53-13-still001.jpg" alt="No Signal still" loading="lazy" width="1920" height="1080"><img src="../assets/work/sequence-02-00-06-15-01-still001.jpg" alt="No Signal still" loading="lazy" width="3840" height="2160"><img src="../assets/work/jiawen-00-06-01-15-still001.jpg" alt="No Signal still" loading="lazy" width="1920" height="1080"><img src="../assets/work/screenshot-2025-08-22-at-12-17-50am.jpg" alt="No Signal still" loading="lazy" width="2822" height="1368"><img src="../assets/work/screenshot-2025-04-01-at-11-54-26pm-1024x604.jpg" alt="No Signal still" loading="lazy" width="1024" height="604"><img src="../assets/work/screenshot-2025-04-01-at-11-56-27pm-1024x662.jpg" alt="No Signal still" loading="lazy" width="1024" height="662"><img src="../assets/work/img-6283-1024x768.jpg" alt="No Signal still" loading="lazy" width="1024" height="768"></section>
+  <section class="body note"><p>StillsNulla: Sapien09–24–1953</p><p>Software used: Touchdesigner, Madmapper, Ableton Live 12, Arduino IDE, Resolume Arena</p><p>m phardware connectionsound designcodemidi making</p></section>
+  <nav class="pn"><a href="in-between.html">&larr; In Between</a><a href="heretic.html">Heretic &rarr;</a></nav>
+
+</main>
+</body>
+</html>
