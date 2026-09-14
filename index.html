@@ -190,6 +190,17 @@
   @keyframes rec-blink { 0% { opacity: 1; } 50% { opacity: 0.15; } 100% { opacity: 1; } }
   .about .vf .tc { bottom: 12px; right: 14px; }
   .about .vf .sp { top: 12px; right: 14px; }
+  /* 胶片格：黑色片基，上下两排镂空片孔透出场景，视频像一格画面，底下一行片边码 */
+  .about.style-viewfinder .film { display: none; }
+  .about.style-film .vf { display: none; }
+  .about .film { display: grid; transform: rotate(-1.3deg); filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.5)); }
+  .about .film .holes { height: 18px; background: #0a0a0a;
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 23px, #000 23px 32px), linear-gradient(#000 0 4px, transparent 4px 14px, #000 14px 18px);
+    -webkit-mask-composite: source-over; mask-image: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 23px, #000 23px 32px), linear-gradient(#000 0 4px, transparent 4px 14px, #000 14px 18px); mask-composite: add; }
+  .about .film .frame { background: #0a0a0a; padding: 4px 14px; }
+  .about .film .frame video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #000; filter: contrast(1.04) saturate(1.05); }
+  .about .film .edge { background: #0a0a0a; display: flex; justify-content: space-between; padding: 2px 14px 5px; font-family: var(--mono); font-size: clamp(12px, 1.35cqw, 17px); line-height: 1; letter-spacing: 0.08em; color: var(--hero-yellow); opacity: 0.9; }
+  .about .film .edge b { font-weight: 400; color: #f4f4f4; }
   @media (prefers-reduced-motion: reduce) { .about.on .card { animation: none; } .about .vf .rec::before { animation: none; } }
   .about .close { position: absolute; right: 18px; bottom: 52px; font-family: var(--mono); font-size: 22px; color: var(--callout); border: 2px dashed var(--callout); padding: 4px 12px; background: rgba(0, 0, 0, 0.35); cursor: pointer; pointer-events: auto; text-decoration: none; }
   .about .close:hover { background: rgba(0, 255, 166, 0.16); }
@@ -238,7 +249,7 @@
       <p class="osd osd-br" id="osd-date"></p>
       <p class="hero">Jiawen<br>Wang</p>
       <p class="hero-sub">Portfolio website</p>
-      <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><div class="vf"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp">SP</span><span class="osd tc" id="about-tc">00:00:00:00</span></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
+      <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><div class="vf"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp">SP</span><span class="osd tc" id="about-tc">00:00:00:00</span></div><div class="film"><div class="holes"></div><div class="frame"><video id="about-video-film" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video></div><div class="holes"></div><div class="edge"><span>JIAWEN WANG &middot; REEL 01</span><span>&#9656; <b id="about-frame">0000</b> &middot; 24 FPS</span></div></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
       <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><a class="label" id="callout-label" href="#about">About me</a></div>
     </div>
 
@@ -247,6 +258,7 @@
 <script>
 (function () {
   // ===== 可以随手改的部分 =====
+  var ABOUT_STYLE = 'film';                           // About 里视频的样式：'film' 胶片格 / 'viewfinder' 取景框
   var FILM_VIDEO = 'assets/video/index-loop.mp4';      // 幕布上放的视频，加载失败就退回下面生成的"电影"
   var WORDS = ['HELLO', 'WELCOME', 'TO MY ROOM', 'PORTFOLIO'];
   var NOISE = {
@@ -1209,7 +1221,9 @@
       else if (!/^#/.test(h.spec.url)) window.location.assign(h.spec.url);
     });
   }
-  var aboutPanel = document.getElementById('about-panel'), aboutVideo = document.getElementById('about-video'), aboutClose = document.getElementById('about-close'), aboutTc = document.getElementById('about-tc');
+  var aboutPanel = document.getElementById('about-panel'), aboutClose = document.getElementById('about-close'), aboutTc = document.getElementById('about-tc'), aboutFrame = document.getElementById('about-frame');
+  if (aboutPanel) aboutPanel.classList.add(ABOUT_STYLE === 'film' ? 'style-film' : 'style-viewfinder');
+  var aboutVideo = document.getElementById(ABOUT_STYLE === 'film' ? 'about-video-film' : 'about-video');
   function openPanel(id) {
     var el = document.getElementById(id); if (!el) return;
     container.classList.add('about-mode'); el.classList.add('on');
@@ -1373,6 +1387,7 @@
     if (aboutTc && aboutVideo && container.classList.contains('about-mode')) {
       var vt = aboutVideo.currentTime || 0, fr = Math.floor((vt % 1) * 25);
       aboutTc.textContent = '00:' + pad(Math.floor(vt / 60)) + ':' + pad(Math.floor(vt) % 60) + ':' + pad(fr);
+      if (aboutFrame) aboutFrame.textContent = ('0000' + Math.floor(vt * 24)).slice(-4);
     }
     if (calloutVisible && calloutAnchor) {
       calloutAnchor.getWorldPosition(tmpV).project(camera);
