@@ -163,36 +163,40 @@
   .about .bio h2 { margin: 0 0 16px; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.6vw, 40px); color: var(--hero-yellow); letter-spacing: 0.06em; }
   .about .bio p { margin: 0 0 10px; opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s; }
   .about.on .bio p { opacity: 1; transform: none; }
-  /* 磨砂方块：没有边框，磨砂层用径向遮罩向四周羽化，融进背景；尺寸随画面按比例，带漂浮动画 */
+  /* 取景框：视频直接浮在场景上，四角 L 形括号、REC 红点、时间码、扫描线，和四角的 OSD 同一套语言 */
   .about .card {
-    position: absolute; right: 4%; top: 9%;
+    position: absolute; right: 4.5%; top: 9%;
     width: min(42cqw, 680px, 105cqh);
-    padding: 22px 22px 16px; box-sizing: border-box;
-    display: grid; gap: 10px; pointer-events: auto;
+    pointer-events: auto;
     opacity: 0; transition: opacity 0.6s;
-  }
-  .about .card::before {
-    content: ''; position: absolute; inset: -34px; z-index: -1; border-radius: 48px;
-    background: rgba(2, 8, 10, 0.5);
-    backdrop-filter: blur(16px) saturate(1.1); -webkit-backdrop-filter: blur(16px) saturate(1.1);
-    -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, #000 52%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0) 100%);
-    mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, #000 52%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0) 100%);
   }
   .about.on .card { opacity: 1; animation: card-float 6s ease-in-out 0.2s infinite; }
   @keyframes card-float {
     0%, 100% { transform: translateY(0) rotate(-0.35deg); }
     50% { transform: translateY(-12px) rotate(0.35deg); }
   }
-  .about .card video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: 12px; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 18px 50px rgba(0, 0, 0, 0.35); }
-  .about .card .cap { display: flex; justify-content: space-between; font-family: var(--mono); font-size: clamp(15px, 1.5cqw, 21px); color: var(--callout); letter-spacing: 0.04em; opacity: 0.85; }
-  @media (prefers-reduced-motion: reduce) { .about.on .card { animation: none; } }
+  .about .vf { position: relative; }
+  .about .vf video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #000; filter: contrast(1.06) saturate(1.1); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
+  .about .vf .scan { position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 2px, rgba(0, 0, 0, 0) 2px 4px), radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.35) 100%); }
+  .about .vf .c { position: absolute; width: clamp(18px, 2.6cqw, 34px); height: clamp(18px, 2.6cqw, 34px); border: 3px solid var(--callout); pointer-events: none; }
+  .about .vf .tl { top: -8px; left: -8px; border-right: 0; border-bottom: 0; }
+  .about .vf .tr { top: -8px; right: -8px; border-left: 0; border-bottom: 0; }
+  .about .vf .bl { bottom: -8px; left: -8px; border-right: 0; border-top: 0; }
+  .about .vf .br { bottom: -8px; right: -8px; border-left: 0; border-top: 0; }
+  .about .vf .osd { position: absolute; font-family: var(--mono); font-size: clamp(14px, 1.7cqw, 22px); line-height: 1; letter-spacing: 0.04em; color: #f4f4f4; text-shadow: -1.5px 0 rgba(255, 60, 220, 0.7), 1.5px 0 rgba(90, 120, 255, 0.7); pointer-events: none; }
+  .about .vf .rec { top: 12px; left: 14px; color: #ff4a4a; text-shadow: 0 0 8px rgba(255, 74, 74, 0.7); }
+  .about .vf .rec::before { content: ''; display: inline-block; width: 0.55em; height: 0.55em; border-radius: 50%; background: #ff4a4a; margin-right: 0.4em; vertical-align: 0.05em; animation: rec-blink 1.2s steps(2) infinite; }
+  @keyframes rec-blink { 0% { opacity: 1; } 50% { opacity: 0.15; } 100% { opacity: 1; } }
+  .about .vf .tc { bottom: 12px; right: 14px; }
+  .about .vf .sp { top: 12px; right: 14px; }
+  @media (prefers-reduced-motion: reduce) { .about.on .card { animation: none; } .about .vf .rec::before { animation: none; } }
   .about .close { position: absolute; right: 18px; bottom: 52px; font-family: var(--mono); font-size: 22px; color: var(--callout); border: 2px dashed var(--callout); padding: 4px 12px; background: rgba(0, 0, 0, 0.35); cursor: pointer; pointer-events: auto; text-decoration: none; }
   .about .close:hover { background: rgba(0, 255, 166, 0.16); }
   #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout { opacity: 0 !important; pointer-events: none; }
   @media (max-width: 700px) {
     .about .bio { width: calc(100% - 36px); font-size: 16px; }
-    .about .card { width: 58cqw; right: 14px; top: auto; bottom: 90px; padding: 12px; }
-    .about .card::before { inset: -20px; border-radius: 30px; }
+    .about .card { width: 60cqw; right: 16px; top: auto; bottom: 92px; }
     .about .card .cap { font-size: 14px; }
   }
   /* Major Mono Display 的大写是实心几何体、小写是细线，首字母用大写就是加粗效果 */
@@ -234,7 +238,7 @@
       <p class="osd osd-br" id="osd-date"></p>
       <p class="hero">Jiawen<br>Wang</p>
       <p class="hero-sub">Portfolio website</p>
-      <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="cap"><span>&#9654; REEL</span><span>00:20</span></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
+      <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><div class="vf"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp">SP</span><span class="osd tc" id="about-tc">00:00:00:00</span></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
       <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><a class="label" id="callout-label" href="#about">About me</a></div>
     </div>
 
@@ -1205,7 +1209,7 @@
       else if (!/^#/.test(h.spec.url)) window.location.assign(h.spec.url);
     });
   }
-  var aboutPanel = document.getElementById('about-panel'), aboutVideo = document.getElementById('about-video'), aboutClose = document.getElementById('about-close');
+  var aboutPanel = document.getElementById('about-panel'), aboutVideo = document.getElementById('about-video'), aboutClose = document.getElementById('about-close'), aboutTc = document.getElementById('about-tc');
   function openPanel(id) {
     var el = document.getElementById(id); if (!el) return;
     container.classList.add('about-mode'); el.classList.add('on');
@@ -1366,6 +1370,10 @@
       updateProjectorLight();
     }
     if (now - lastOsd > 500) { lastOsd = now; updateOsd(t); }
+    if (aboutTc && aboutVideo && container.classList.contains('about-mode')) {
+      var vt = aboutVideo.currentTime || 0, fr = Math.floor((vt % 1) * 25);
+      aboutTc.textContent = '00:' + pad(Math.floor(vt / 60)) + ':' + pad(Math.floor(vt) % 60) + ':' + pad(fr);
+    }
     if (calloutVisible && calloutAnchor) {
       calloutAnchor.getWorldPosition(tmpV).project(camera);
       var cw = container.clientWidth, ch = container.clientHeight;
