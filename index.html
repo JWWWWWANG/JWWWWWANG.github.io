@@ -159,14 +159,14 @@
   /* About 面板：留在镜头视角里，左边字幕，右上磨砂方块放视频 */
   .about { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.4s; }
   .about.on { opacity: 1; }
-  .about .bio { position: absolute; left: 18px; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); width: min(46%, 600px); color: #e8f1ee; font-family: var(--mono); font-size: clamp(16px, 1.75vw, 25px); line-height: 1.32; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8); pointer-events: auto; }
+  .about .bio { position: absolute; left: 18px; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); width: min(36%, 520px); color: #e8f1ee; font-family: var(--mono); font-size: clamp(16px, 1.75vw, 25px); line-height: 1.32; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8); pointer-events: auto; }
   .about .bio h2 { margin: 0 0 16px; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.6vw, 40px); color: var(--hero-yellow); letter-spacing: 0.06em; }
   .about .bio p { margin: 0 0 10px; opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s; }
   .about.on .bio p { opacity: 1; transform: none; }
   /* 取景框：视频直接浮在场景上，四角 L 形括号、REC 红点、时间码、扫描线，和四角的 OSD 同一套语言 */
   .about .card {
-    position: absolute; right: 4.5%; top: 9%;
-    width: min(42cqw, 680px, 105cqh);
+    position: absolute; right: 3%; top: 9%;
+    width: min(58cqw, 940px, 108cqh);
     pointer-events: auto;
     opacity: 0; transition: opacity 0.6s;
   }
@@ -207,7 +207,7 @@
   #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout { opacity: 0 !important; pointer-events: none; }
   @media (max-width: 700px) {
     .about .bio { width: calc(100% - 36px); font-size: 16px; }
-    .about .card { width: 60cqw; right: 16px; top: auto; bottom: 92px; }
+    .about .card { width: 90cqw; right: 16px; top: auto; bottom: 92px; }
     .about .card .cap { font-size: 14px; }
   }
   /* Major Mono Display 的大写是实心几何体、小写是细线，首字母用大写就是加粗效果 */
@@ -258,7 +258,7 @@
 <script>
 (function () {
   // ===== 可以随手改的部分 =====
-  var ABOUT_STYLE = 'film';                           // About 里视频的样式：'film' 胶片格 / 'viewfinder' 取景框
+  var ABOUT_STYLE = 'viewfinder';                           // About 里视频的样式：'film' 胶片格 / 'viewfinder' 取景框
   var FILM_VIDEO = 'assets/video/index-loop.mp4';      // 幕布上放的视频，加载失败就退回下面生成的"电影"
   var WORDS = ['HELLO', 'WELCOME', 'TO MY ROOM', 'PORTFOLIO'];
   var NOISE = {
