@@ -153,7 +153,7 @@
   .callout.on .label { opacity: 1; pointer-events: auto; cursor: pointer; }
   .callout .label:hover { background: rgba(0, 255, 166, 0.14); }
   #tv-scene.hover-person { cursor: pointer; }
-  #tv-scene.no-anim .callout, #tv-scene.no-anim .callout * { transition: none !important; animation: none !important; }
+  #tv-scene.no-anim .callout, #tv-scene.no-anim .callout *, #tv-scene.no-anim .about, #tv-scene.no-anim .about * { transition: none !important; animation: none !important; }
   @keyframes callout-pulse { 0% { opacity: 1; } 50% { opacity: 0.55; } 100% { opacity: 1; } }
   @media (max-width: 560px) { .callout { font-size: 22px; } .callout.on .line { width: 60px; } }
   /* About 面板：留在镜头视角里，左边字幕，右上磨砂方块放视频 */
@@ -1318,6 +1318,7 @@
     var el = document.getElementById(id); if (!el) return;
     container.classList.add('about-mode'); el.classList.add('on');
     setTimeout(function () { if (container.classList.contains('about-mode')) physStart(); }, 700);   // 等淡入和字幕出现后再接管位置
+    if (/dbgbio=1/.test(location.search)) setTimeout(function () { var p0 = el.querySelector('.bio p'); var r = p0.getBoundingClientRect(); console.info('bio p opacity=' + getComputedStyle(p0).opacity + ' top=' + Math.round(r.top) + ' left=' + Math.round(r.left) + ' w=' + Math.round(r.width) + ' color=' + getComputedStyle(p0).color + ' panelOpacity=' + getComputedStyle(el).opacity); }, 3000);
     if (aboutVideo) { aboutVideo.currentTime = 0; var pr = aboutVideo.play(); if (pr && pr.catch) pr.catch(function () {}); }
   }
   function closePanel() {
@@ -1380,6 +1381,7 @@
   }
   container.addEventListener('pointerleave', function () { setHover(null); });
   var dbgZoom = (location.search.match(/zoom=(\w+)/) || [])[1];
+  if (dbgZoom && /noanim=1/.test(location.search)) container.classList.add('no-anim');
   if (dbgZoom) setTimeout(function () { var hz = hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgZoom] && h.camPoint; })[0]; if (hz) { tv.updateMatrixWorld(true); zoomToHotspot(hz, true); } }, 50);
   var dbgHover = (location.search.match(/hover=(\w+)/) || [])[1];
   if (dbgHover) { container.classList.add('no-anim'); setHover(hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgHover]; })[0] || hotspots[0]); scrambleT0 = -1e9; }
