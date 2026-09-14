@@ -158,29 +158,30 @@
   /* About 面板：留在镜头视角里，左边字幕，右上磨砂方块放视频 */
   .about { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.4s; }
   .about.on { opacity: 1; }
-  .about .bio { position: absolute; left: 18px; top: 62px; width: min(46%, 600px); color: #e8f1ee; font-family: var(--mono); font-size: clamp(16px, 1.75vw, 25px); line-height: 1.32; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8); pointer-events: auto; }
+  .about .bio { position: absolute; left: 18px; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); width: min(46%, 600px); color: #e8f1ee; font-family: var(--mono); font-size: clamp(16px, 1.75vw, 25px); line-height: 1.32; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8); pointer-events: auto; }
   .about .bio h2 { margin: 0 0 16px; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.6vw, 40px); color: var(--hero-yellow); letter-spacing: 0.06em; }
   .about .bio p { margin: 0 0 10px; opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s; }
   .about.on .bio p { opacity: 1; transform: none; }
+  /* 磨砂方块：深青色半透明 + 模糊，绿色虚线圆角边框，和站点的虚线框语言一致 */
   .about .card {
-    position: absolute; right: 4.5%; top: 6%;
-    width: min(30vw, 440px); aspect-ratio: 1;
-    border-radius: 28px; padding: 18px; box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.11); border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    display: grid; align-content: center; gap: 12px; pointer-events: auto;
-    transform: translateY(16px) scale(0.96); transition: transform 0.55s cubic-bezier(.2,.8,.2,1);
+    position: absolute; right: 4%; top: 6%;
+    width: min(42vw, 640px);
+    border-radius: 22px; padding: 16px 16px 12px; box-sizing: border-box;
+    background: rgba(2, 8, 10, 0.42); border: 2px dashed var(--callout);
+    backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    box-shadow: 0 0 0 1px rgba(0, 255, 166, 0.12), 0 0 40px rgba(0, 255, 166, 0.08);
+    display: grid; gap: 10px; pointer-events: auto;
+    transform: translateY(16px) scale(0.97); transition: transform 0.55s cubic-bezier(.2,.8,.2,1);
   }
   .about.on .card { transform: none; }
-  .about .card video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: 16px; background: #000; }
-  .about .card .cap { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 18px; color: #e8f1ee; opacity: 0.85; }
+  .about .card video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: 10px; background: #000; }
+  .about .card .cap { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 20px; color: var(--callout); letter-spacing: 0.04em; }
   .about .close { position: absolute; right: 18px; bottom: 52px; font-family: var(--mono); font-size: 22px; color: var(--callout); border: 2px dashed var(--callout); padding: 4px 12px; background: rgba(0, 0, 0, 0.35); cursor: pointer; pointer-events: auto; text-decoration: none; }
   .about .close:hover { background: rgba(0, 255, 166, 0.16); }
-  #tv-scene.about-mode .hero, #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout { opacity: 0 !important; pointer-events: none; }
+  #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout { opacity: 0 !important; pointer-events: none; }
   @media (max-width: 700px) {
-    .about .bio { width: calc(100% - 36px); top: 56px; font-size: 16px; }
-    .about .card { width: 44vw; right: 14px; top: auto; bottom: 90px; padding: 10px; border-radius: 18px; }
+    .about .bio { width: calc(100% - 36px); font-size: 16px; }
+    .about .card { width: 56vw; right: 14px; top: auto; bottom: 90px; padding: 10px; border-radius: 14px; }
     .about .card .cap { font-size: 14px; }
   }
   /* Major Mono Display 的大写是实心几何体、小写是细线，首字母用大写就是加粗效果 */
@@ -222,7 +223,7 @@
       <p class="osd osd-br" id="osd-date"></p>
       <p class="hero">Jiawen<br>Wang</p>
       <p class="hero-sub">Portfolio website</p>
-      <div class="about" id="about-panel"><div class="bio"><h2>About me</h2><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="cap"><span>reel</span><span>00:20</span></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
+      <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="cap"><span>&#9654; REEL</span><span>00:20</span></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
       <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><a class="label" id="callout-label" href="#about">About me</a></div>
     </div>
 
