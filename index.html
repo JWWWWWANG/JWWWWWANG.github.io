@@ -171,6 +171,10 @@
     opacity: 0; transition: opacity 0.6s;
   }
   .about.on .card { opacity: 1; animation: card-float 6s ease-in-out 0.2s infinite; }
+  .about .card.phys { animation: none !important; right: auto; top: 0; left: 0; will-change: transform; cursor: grab; touch-action: none; }
+  .about .card.phys.dragging { cursor: grabbing; }
+  .about .bump { animation: text-bump 0.28s ease-out; }
+  @keyframes text-bump { 0% { transform: translate(var(--bx, 0), var(--by, 0)); } 100% { transform: none; } }
   @keyframes card-float {
     0%, 100% { transform: translateY(0) rotate(-0.35deg); }
     50% { transform: translateY(-12px) rotate(0.35deg); }
@@ -1224,12 +1228,100 @@
   var aboutPanel = document.getElementById('about-panel'), aboutClose = document.getElementById('about-close'), aboutTc = document.getElementById('about-tc'), aboutFrame = document.getElementById('about-frame');
   if (aboutPanel) aboutPanel.classList.add(ABOUT_STYLE === 'film' ? 'style-film' : 'style-viewfinder');
   var aboutVideo = document.getElementById(ABOUT_STYLE === 'film' ? 'about-video-film' : 'about-video');
+  // ---------- 视频取景框的"扔"物理：拖动、抛出、撞到边缘和文字反弹 ----------
+  var aboutCard = aboutPanel ? aboutPanel.querySelector('.card') : null;
+  var heroEl = container.querySelector('.hero'), bioEl = aboutPanel ? aboutPanel.querySelector('.bio') : null;
+  var phys = { on: false, x: 0, y: 0, vx: 0, vy: 0, w: 0, h: 0, drag: null, obstacles: [] };
+  function rectIn(el) { var r = el.getBoundingClientRect(), c = container.getBoundingClientRect(); return { l: r.left - c.left, t: r.top - c.top, r: r.right - c.left, b: r.bottom - c.top, el: el }; }
+  function physStart() {
+    if (!aboutCard || phys.on) return;
+    var r = rectIn(aboutCard);
+    phys.x = r.l; phys.y = r.t; phys.w = r.r - r.l; phys.h = r.b - r.t; phys.vx = 0; phys.vy = 0; phys.on = true;
+    aboutCard.classList.add('phys'); physRender(0);
+    physObstacles();
+    if (/throw=1/.test(location.search)) { phys.vx = -1100; phys.vy = -120; console.info('debug throw from', Math.round(phys.x), Math.round(phys.y), 'obstacles', phys.obstacles.length); }
+  }
+  function physObstacles() {
+    phys.obstacles = [];
+    [heroEl, bioEl, aboutClose].forEach(function (el) { if (el) phys.obstacles.push(rectIn(el)); });
+  }
+  function physStop() {
+    phys.on = false; phys.drag = null;
+    if (aboutCard) { aboutCard.classList.remove('phys', 'dragging'); aboutCard.style.transform = ''; }
+  }
+  function physRender(t) {
+    var speed = Math.hypot(phys.vx, phys.vy);
+    var floatY = phys.drag ? 0 : Math.sin(t * 1.05) * 6 * Math.max(0, 1 - speed / 60);
+    aboutCard.style.transform = 'translate(' + phys.x.toFixed(1) + 'px,' + (phys.y + floatY).toFixed(1) + 'px)';
+  }
+  function bump(el, nx, ny) {
+    if (!el) return;
+    if (/throw=1/.test(location.search)) console.info('bounce off', el.className, 'at', Math.round(phys.x), Math.round(phys.y));
+    el.style.setProperty('--bx', (nx * 6) + 'px'); el.style.setProperty('--by', (ny * 6) + 'px');
+    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+  }
+  function physStep(dt, t) {
+    if (!phys.on || !aboutCard) return;
+    if (!phys.drag) {
+      phys.x += phys.vx * dt; phys.y += phys.vy * dt;
+      var damp = Math.pow(0.35, dt);            // 一秒后剩三成五的速度
+      phys.vx *= damp; phys.vy *= damp;
+      if (Math.abs(phys.vx) < 1) phys.vx = 0; if (Math.abs(phys.vy) < 1) phys.vy = 0;
+      var W = container.clientWidth, H = container.clientHeight, m = 10, e = 0.72;
+      if (phys.x < m) { phys.x = m; phys.vx = Math.abs(phys.vx) * e; }
+      if (phys.x + phys.w > W - m) { phys.x = W - m - phys.w; phys.vx = -Math.abs(phys.vx) * e; }
+      if (phys.y < m) { phys.y = m; phys.vy = Math.abs(phys.vy) * e; }
+      if (phys.y + phys.h > H - m) { phys.y = H - m - phys.h; phys.vy = -Math.abs(phys.vy) * e; }
+      for (var i = 0; i < phys.obstacles.length; i++) {
+        var o = phys.obstacles[i];
+        var cl = phys.x, ct = phys.y, cr = phys.x + phys.w, cb = phys.y + phys.h;
+        if (cr <= o.l || cl >= o.r || cb <= o.t || ct >= o.b) continue;
+        var pl = cr - o.l, pr = o.r - cl, pt = cb - o.t, pb = o.b - ct;   // 四个方向的穿透深度
+        var minP = Math.min(pl, pr, pt, pb), kick = 70;
+        if (minP === pl) { phys.x -= pl; phys.vx = -Math.max(Math.abs(phys.vx) * e, kick); bump(o.el, 1, 0); }
+        else if (minP === pr) { phys.x += pr; phys.vx = Math.max(Math.abs(phys.vx) * e, kick); bump(o.el, -1, 0); }
+        else if (minP === pt) { phys.y -= pt; phys.vy = -Math.max(Math.abs(phys.vy) * e, kick); bump(o.el, 0, 1); }
+        else { phys.y += pb; phys.vy = Math.max(Math.abs(phys.vy) * e, kick); bump(o.el, 0, -1); }
+      }
+    }
+    physRender(t);
+  }
+  if (aboutCard) {
+    aboutCard.addEventListener('pointerdown', function (e) {
+      if (!phys.on) return;
+      e.stopPropagation(); e.preventDefault();
+      aboutCard.setPointerCapture(e.pointerId); aboutCard.classList.add('dragging');
+      phys.drag = { id: e.pointerId, ox: e.clientX - phys.x, oy: e.clientY - phys.y, lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
+      phys.vx = 0; phys.vy = 0;
+    });
+    aboutCard.addEventListener('pointermove', function (e) {
+      var d = phys.drag; if (!d || e.pointerId !== d.id) return;
+      var now = performance.now(), dtm = Math.max(1, now - d.lt) / 1000;
+      d.vx = d.vx * 0.5 + ((e.clientX - d.lx) / dtm) * 0.5; d.vy = d.vy * 0.5 + ((e.clientY - d.ly) / dtm) * 0.5;
+      d.lx = e.clientX; d.ly = e.clientY; d.lt = now;
+      phys.x = e.clientX - d.ox; phys.y = e.clientY - d.oy;
+    });
+    var release = function (e) {
+      var d = phys.drag; if (!d || e.pointerId !== d.id) return;
+      var stale = performance.now() - d.lt > 80;                 // 停住再松手就不算抛
+      var maxV = 1600, vx = stale ? 0 : d.vx, vy = stale ? 0 : d.vy, sp = Math.hypot(vx, vy);
+      if (sp > maxV) { vx *= maxV / sp; vy *= maxV / sp; }
+      phys.vx = vx; phys.vy = vy; phys.drag = null;
+      aboutCard.classList.remove('dragging');
+    };
+    aboutCard.addEventListener('pointerup', release);
+    aboutCard.addEventListener('pointercancel', release);
+    window.addEventListener('resize', function () { if (phys.on) physObstacles(); });
+  }
+
   function openPanel(id) {
     var el = document.getElementById(id); if (!el) return;
     container.classList.add('about-mode'); el.classList.add('on');
+    setTimeout(function () { if (container.classList.contains('about-mode')) physStart(); }, 700);   // 等淡入和字幕出现后再接管位置
     if (aboutVideo) { aboutVideo.currentTime = 0; var pr = aboutVideo.play(); if (pr && pr.catch) pr.catch(function () {}); }
   }
   function closePanel() {
+    physStop();
     container.classList.remove('about-mode');
     if (aboutPanel) aboutPanel.classList.remove('on');
     if (aboutVideo) aboutVideo.pause();
@@ -1384,6 +1476,7 @@
       updateProjectorLight();
     }
     if (now - lastOsd > 500) { lastOsd = now; updateOsd(t); }
+    if (phys.on) physStep(dt, t);
     if (aboutTc && aboutVideo && container.classList.contains('about-mode')) {
       var vt = aboutVideo.currentTime || 0, fr = Math.floor((vt % 1) * 25);
       aboutTc.textContent = '00:' + pad(Math.floor(vt / 60)) + ':' + pad(Math.floor(vt) % 60) + ':' + pad(fr);
