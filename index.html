@@ -153,7 +153,7 @@
   .callout.on .label { opacity: 1; pointer-events: auto; cursor: pointer; }
   .callout .label:hover { background: rgba(0, 255, 166, 0.14); }
   #tv-scene.hover-person { cursor: pointer; }
-  #tv-scene.no-anim .callout, #tv-scene.no-anim .callout *, #tv-scene.no-anim .about, #tv-scene.no-anim .about * { transition: none !important; animation: none !important; }
+  #tv-scene.no-anim .callout, #tv-scene.no-anim .callout *, #tv-scene.no-anim .about, #tv-scene.no-anim .about *, #tv-scene.no-anim .workp, #tv-scene.no-anim .workp * { transition: none !important; animation: none !important; }
   @keyframes callout-pulse { 0% { opacity: 1; } 50% { opacity: 0.55; } 100% { opacity: 1; } }
   @media (max-width: 560px) { .callout { font-size: 22px; } .callout.on .line { width: 60px; } }
   /* About 面板：留在镜头视角里，左边字幕，右上磨砂方块放视频 */
@@ -208,7 +208,26 @@
   @media (prefers-reduced-motion: reduce) { .about.on .card { animation: none; } .about .vf .rec::before { animation: none; } }
   .about .close { position: absolute; right: 18px; bottom: 52px; font-family: var(--mono); font-size: 22px; color: var(--callout); border: 2px dashed var(--callout); padding: 4px 12px; background: rgba(0, 0, 0, 0.35); cursor: pointer; pointer-events: auto; text-decoration: none; }
   .about .close:hover { background: rgba(0, 255, 166, 0.16); }
-  #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout { opacity: 0 !important; pointer-events: none; }
+  #tv-scene.about-mode .hero-sub, #tv-scene.about-mode .callout, #tv-scene.work-mode .hero-sub, #tv-scene.work-mode .callout { opacity: 0 !important; pointer-events: none; }
+  /* Work 面板：整屏是幕布上循环的视频，压一层暗色渐变和扫描线，左边是作品列表 */
+  .workp { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.7s; z-index: 2; }
+  .about { z-index: 2; }
+  .osd, .hero, .hero-sub { z-index: 3; }
+  .callout { z-index: 4; }
+  .workp.on { opacity: 1; }
+  .workp .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.1) contrast(1.05); }
+  .workp .shade { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgba(2, 8, 10, 0.82) 0%, rgba(2, 8, 10, 0.55) 50%, rgba(2, 8, 10, 0.25) 100%), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 2px, rgba(0, 0, 0, 0) 2px 4px); }
+  .workp .list { position: absolute; left: 12px; top: calc(62px + var(--hero-size, 64px) * 2.15 + 14px); bottom: 58px; width: min(64%, 780px); overflow: auto; pointer-events: auto; display: grid; gap: 4px; align-content: start; padding: 0 10px 20px 6px; scrollbar-width: thin; scrollbar-color: rgba(0, 255, 166, 0.5) transparent; }
+  .workp .item { display: grid; grid-template-columns: 7.2em 1fr; gap: 14px; align-items: baseline; color: #e8f1ee; text-decoration: none; font-family: var(--mono); font-size: clamp(16px, 1.65vw, 24px); line-height: 1.2; padding: 7px 10px; border: 2px dashed transparent; opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s, border-color 0.15s, background 0.15s; }
+  .workp.on .item { opacity: 1; transform: none; }
+  .workp .item:hover, .workp .item:focus-visible { border-color: var(--callout); background: rgba(0, 255, 166, 0.1); outline: none; }
+  .workp .item .n { color: var(--callout); white-space: nowrap; }
+  .workp .item .t { display: block; color: var(--hero-yellow); font-family: var(--display); font-size: 0.95em; letter-spacing: 0.04em; }
+  .workp .item .g { display: block; color: #a9bdb8; font-size: 0.78em; margin-top: 2px; }
+  .workp .close { position: absolute; right: 18px; bottom: 52px; font-family: var(--mono); font-size: 22px; color: var(--callout); border: 2px dashed var(--callout); padding: 4px 12px; background: rgba(0, 0, 0, 0.35); cursor: pointer; pointer-events: auto; text-decoration: none; }
+  .workp .close:hover { background: rgba(0, 255, 166, 0.16); }
+  @media (max-width: 700px) { .workp .list { width: calc(100% - 24px); bottom: 96px; } .workp .item { grid-template-columns: 1fr; gap: 2px; } }
   @media (max-width: 700px) {
     .about .bio { width: calc(100% - 36px); font-size: 16px; }
     .about .card { width: 90cqw; right: 16px; top: auto; bottom: 92px; }
@@ -254,6 +273,7 @@
       <p class="hero">Jiawen<br>Wang</p>
       <p class="hero-sub">Portfolio website</p>
       <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><div class="vf"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp">SP</span><span class="osd tc" id="about-tc">00:00:00:00</span></div><div class="film"><div class="holes"></div><div class="frame"><video id="about-video-film" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video></div><div class="holes"></div><div class="edge"><span>JIAWEN WANG &middot; REEL 01</span><span>&#9656; <b id="about-frame">0000</b> &middot; 24 FPS</span></div></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
+      <div class="workp" id="work-panel"><video class="bg" id="work-video" src="assets/video/index-loop.mp4" muted loop playsinline preload="none"></video><div class="shade"></div><nav class="list" aria-label="Work"><a class="item" href="work/in-between.html" style="transition-delay:0.30s"><span class="n">[001] &middot; 2025</span><span><span class="t">In Between</span><span class="g">Installation / Interactive Art / Real-Time Render</span></span></a><a class="item" href="work/no-signal.html" style="transition-delay:0.37s"><span class="n">[002] &middot; 2025</span><span><span class="t">No Signal</span><span class="g">Audio-Visual / Interactive Art / Laser Show / Real-Time Render</span></span></a><a class="item" href="work/heretic.html" style="transition-delay:0.44s"><span class="n">[003] &middot; 2025</span><span><span class="t">Heretic</span><span class="g">Opera / Projection Mapping / Audio-Visual</span></span></a><a class="item" href="work/word.html" style="transition-delay:0.51s"><span class="n">[004] &middot; 2025</span><span><span class="t">Word</span><span class="g">Installation / Real-Time Rendering / Analog Video</span></span></a><a class="item" href="work/reality-glitch.html" style="transition-delay:0.58s"><span class="n">[005] &middot; 2024</span><span><span class="t">Reality Glitch.V0</span><span class="g">Interactive Installation / Immersive Environment / Real-Time Rendering</span></span></a><a class="item" href="work/digital-anomalies.html" style="transition-delay:0.65s"><span class="n">[006] &middot; 2024</span><span><span class="t">Digital Anomalies</span><span class="g">AIGC / Video Art</span></span></a><a class="item" href="work/get-out.html" style="transition-delay:0.72s"><span class="n">[007] &middot; 2023</span><span><span class="t">Get Out!</span><span class="g">3D Animation</span></span></a><a class="item" href="work/reborn.html" style="transition-delay:0.79s"><span class="n">[008] &middot; 2024</span><span><span class="t">Reborn</span><span class="g">Audio-Visual / Video Art</span></span></a><a class="item" href="work/control.html" style="transition-delay:0.86s"><span class="n">[009] &middot; 2024</span><span><span class="t">Control</span><span class="g">Video Art</span></span></a><a class="item" href="work/the-time-on-the-watch.html" style="transition-delay:0.93s"><span class="n">[010] &middot; 2024</span><span><span class="t">The Time on the Watch</span><span class="g">Film</span></span></a><a class="item" href="work/epochs.html" style="transition-delay:1.00s"><span class="n">[011] &middot; 2024</span><span><span class="t">Epochs</span><span class="g">AIGC</span></span></a><a class="item" href="work/remembrance-and-forgotten.html" style="transition-delay:1.07s"><span class="n">[012] &middot; 2024</span><span><span class="t">Remembrance and Forgotten</span><span class="g">Photography</span></span></a><a class="item" href="work/city-surf.html" style="transition-delay:1.14s"><span class="n">[013] &middot; 2023</span><span><span class="t">City Surf</span><span class="g">Interactive Installation / Projection Mapping</span></span></a></nav><a class="close" href="#" id="work-close">&larr; back</a></div>
       <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><a class="label" id="callout-label" href="#about">About me</a></div>
     </div>
 
@@ -279,9 +299,9 @@
   var AUTO_ROTATE_SPEED = 0;                        // 弧度/秒，0 就不自动转
   var GLOW = 1.35;                                  // 光源的辉光强度，0 关掉
   var HOTSPOTS = {                                  // 悬停时弹出的标注和跳转地址
-    about: { text: 'About me', url: 'about.html', zoom: true, panel: 'about-panel' },   // 人物：镜头推到脸前后在场景里打开 About 面板
+    about: { text: 'About me', url: 'about.html', zoom: true, panel: 'about-panel', zoomOffset: { x: 0.3, y: 0.14 } },   // 人物：镜头推到脸前后在场景里打开 About 面板
     connect: { text: 'Connect', url: 'connect.html' },  // 键盘
-    work: { text: 'Work', url: 'work.html' }            // 投影仪、幕布
+    work: { text: 'Work', url: 'work.html', zoom: true, panel: 'work-panel', zoomOffset: { x: 0, y: 0 } }   // 投影仪、幕布：镜头推到幕布前，背景变成幕布上的视频
   };
   var COLORS = {
     shell: 0xc4bca8,      // 外壳（IBM 米灰色）
@@ -733,8 +753,9 @@
     tryPlay();
     container.addEventListener('pointerdown', tryPlay, { once: true });
   }
-  var scrA = scrPt(-0.55, 0.42, 0.06);
-  addHotspot(tv, [1.62, 1.04, 0.12], [scrC.x, scrC.y, scrC.z], [scrA.x, scrA.y, scrA.z], HOTSPOTS.work, scrRot);
+  var scrA = scrPt(-0.55, 0.42, 0.06), scrCam = scrPt(0, 0, 1.25);
+  var screenHot = addHotspot(tv, [1.62, 1.04, 0.12], [scrC.x, scrC.y, scrC.z], [scrA.x, scrA.y, scrA.z], HOTSPOTS.work, scrRot, [scrCam.x, scrCam.y, scrCam.z]);
+  screenHot.flyLook = new THREE.Object3D(); screenHot.flyLook.position.copy(scrC); tv.add(screenHot.flyLook);
 
   // 幕布上放的"电影"：几种色调的镜头轮换，偶尔闪白，每第四个镜头是片名卡
   var SCENES = [
@@ -802,7 +823,8 @@
   for (var vs = 0; vs < 7; vs++) box(pj, 0.018, 0.06, 0.008, mats.trim, -0.15 + vs * 0.03, -0.08, 0.152, false);   // 正面散热缝
   var pjLed = box(pj, 0.015, 0.008, 0.008, new THREE.MeshBasicMaterial({ color: 0x4fa3ff }), 0.1, -0.11, 0.152, false);
   pjLed.userData.glowMat = pjLed.material;
-  addHotspot(pj, [0.44, 0.32, 0.36], [0, -0.09, 0], [0.05, 0.02, 0.1], HOTSPOTS.work);
+  var pjHot = addHotspot(pj, [0.44, 0.32, 0.36], [0, -0.09, 0], [0.05, 0.02, 0.1], HOTSPOTS.work);
+  pjHot.camPoint = screenHot.camPoint; pjHot.flyLook = screenHot.flyLook;   // 点投影仪也飞到幕布前
   // 对准幕布中心：机身的"前方"是局部 +x，先绕 z 俯仰再绕 y 转向
   var pjDir = scrC.clone().sub(pj.position.clone().add(lensLocal)).normalize();
   pj.rotation.set(0, Math.atan2(-pjDir.z, pjDir.x), Math.asin(pjDir.y));
@@ -1214,10 +1236,11 @@
   }
   function zoomToHotspot(h, instant) {
     var P = h.camPoint.getWorldPosition(new THREE.Vector3());
-    var H = h.anchor.getWorldPosition(new THREE.Vector3());
+    var H = (h.flyLook || h.anchor).getWorldPosition(new THREE.Vector3());
     var dir = H.clone().sub(P).normalize();
     var right = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
-    var look = H.clone().sub(right.multiplyScalar(0.3)).add(new THREE.Vector3(0, 0.14, 0));   // 视线偏左偏上，人物落在画面右下，上方留给方块
+    var off = h.spec.zoomOffset || { x: 0, y: 0 };
+    var look = H.clone().sub(right.multiplyScalar(off.x)).add(new THREE.Vector3(0, off.y, 0));   // 视线偏移：About 让人物落在右下，Work 正对幕布
     zoomed = true;
     setHover(null);
     flyTo(P, look, instant ? 1 : 1400, function () {
@@ -1314,18 +1337,31 @@
     window.addEventListener('resize', function () { if (phys.on) physObstacles(); });
   }
 
+  var workPanel = document.getElementById('work-panel'), workVideo = document.getElementById('work-video'), workClose = document.getElementById('work-close');
+  var activePanel = null, panelOpenedAt = 0;
+  if (workPanel) { workPanel.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); workPanel.addEventListener('pointerup', function (e) { e.stopPropagation(); }); }
+  if (workClose) workClose.addEventListener('click', function (e) { e.preventDefault(); if (zoomed && !camAnim) flyHome(); });
   function openPanel(id) {
     var el = document.getElementById(id); if (!el) return;
-    container.classList.add('about-mode'); el.classList.add('on');
+    activePanel = id; panelOpenedAt = performance.now();
+    container.classList.add(id === 'work-panel' ? 'work-mode' : 'about-mode'); el.classList.add('on');
+    if (id === 'work-panel' && workVideo) {
+      if (/dbgwork=1/.test(location.search)) setTimeout(function () { var it = el.querySelectorAll('.item'); var r = it.length ? it[0].getBoundingClientRect() : null; var ls = el.querySelector('.list').getBoundingClientRect(); console.info('work items=' + it.length + ' first=' + (r ? Math.round(r.left) + ',' + Math.round(r.top) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' op=' + getComputedStyle(it[0]).opacity : 'none') + ' list=' + Math.round(ls.left) + ',' + Math.round(ls.top) + ' ' + Math.round(ls.width) + 'x' + Math.round(ls.height) + ' panelOp=' + getComputedStyle(el).opacity + ' z=' + getComputedStyle(el.querySelector('.list')).zIndex); }, 1200);
+      if (filmVideo && useVideo) workVideo.currentTime = filmVideo.currentTime;   // 和幕布上的视频接着同一帧
+      var wp = workVideo.play(); if (wp && wp.catch) wp.catch(function () {});
+      return;
+    }
     setTimeout(function () { if (container.classList.contains('about-mode')) physStart(); }, 700);   // 等淡入和字幕出现后再接管位置
     if (/dbgbio=1/.test(location.search)) setTimeout(function () { var p0 = el.querySelector('.bio p'); var r = p0.getBoundingClientRect(); console.info('bio p opacity=' + getComputedStyle(p0).opacity + ' top=' + Math.round(r.top) + ' left=' + Math.round(r.left) + ' w=' + Math.round(r.width) + ' color=' + getComputedStyle(p0).color + ' panelOpacity=' + getComputedStyle(el).opacity); }, 3000);
     if (aboutVideo) { aboutVideo.currentTime = 0; var pr = aboutVideo.play(); if (pr && pr.catch) pr.catch(function () {}); }
   }
   function closePanel() {
-    physStop();
-    container.classList.remove('about-mode');
+    physStop(); activePanel = null;
+    container.classList.remove('about-mode', 'work-mode');
     if (aboutPanel) aboutPanel.classList.remove('on');
     if (aboutVideo) aboutVideo.pause();
+    if (workPanel) workPanel.classList.remove('on');
+    if (workVideo) workVideo.pause();
   }
   function flyHome() { zoomed = false; closePanel(); flyTo(camHome.pos, camHome.look, 1200, null); }
   if (aboutPanel) { aboutPanel.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); aboutPanel.addEventListener('pointerup', function (e) { e.stopPropagation(); }); }
@@ -1496,6 +1532,7 @@
     finalMat.uniforms.uGlitch.value = glitch;
     finalMat.uniforms.uTime.value = t;
 
+    if (activePanel === 'work-panel' && !camAnim && now - panelOpenedAt > 900) return;   // 面板盖住画面后不再渲染 3D
     renderer.shadowMap.needsUpdate = true;
     renderer.setRenderTarget(rtScene);
     renderer.render(scene, camera);
