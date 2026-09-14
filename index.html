@@ -165,7 +165,7 @@
   .about.on .bio p { opacity: 1; transform: none; }
   /* 取景框：视频直接浮在场景上，四角 L 形括号、REC 红点、时间码、扫描线，和四角的 OSD 同一套语言 */
   .about .card {
-    position: absolute; right: 3%; top: 9%;
+    position: absolute; right: 3%; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px);   /* 和左边的简介同一水平线 */
     width: min(58cqw, 940px, 108cqh);
     pointer-events: auto;
     opacity: 0; transition: opacity 0.6s;
