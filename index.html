@@ -1400,6 +1400,7 @@
   function openPanel(id) {
     var el = document.getElementById(id); if (!el) return;
     activePanel = id; panelOpenedAt = performance.now();
+    console.info('panel open', id);
     container.classList.add(id === 'work-panel' ? 'work-mode' : 'about-mode'); el.classList.add('on');
     if (id === 'work-panel' && workVideo) {
       if (workList) workList.scrollTop = 0;
