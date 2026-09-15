@@ -237,13 +237,13 @@
     background: linear-gradient(90deg, rgba(2, 8, 10, 0.82) 0%, rgba(2, 8, 10, 0.55) 50%, rgba(2, 8, 10, 0.25) 100%), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 2px, rgba(0, 0, 0, 0) 2px 4px); }
   /* 作品目录：左边竖排文字，右边取景框式的悬停预览 */
   .workp .list { position: absolute; left: 12px; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); bottom: 58px; width: min(46%, 640px); overflow: auto; pointer-events: auto; display: grid; gap: 2px; align-content: start; padding: 0 8px 12px 6px; scrollbar-width: thin; scrollbar-color: rgba(0, 255, 166, 0.5) transparent; }
-  .workp .item { display: grid; grid-template-columns: 4.2em 1fr auto; gap: 14px; align-items: baseline; color: #e8f1ee; text-decoration: none; font-family: var(--mono); font-size: clamp(16px, 1.6vw, 24px); line-height: 1.1; padding: 7px 10px; border-left: 3px solid transparent; opacity: 0; transform: translateX(-8px); transition: opacity 0.4s, transform 0.4s, border-color 0.15s, background 0.15s; }
+  .workp .item { display: grid; grid-template-columns: 4.2em 1fr auto; gap: 14px; align-items: baseline; color: #e8f1ee; text-decoration: none; font-family: var(--mono); font-size: clamp(15px, min(1.6cqw, 2.5cqh), 24px); line-height: 1.1; padding: clamp(3px, 0.6cqh, 7px) 10px; border-left: 3px solid transparent; opacity: 0; transform: translateX(-8px); transition: opacity 0.4s, transform 0.4s, border-color 0.15s, background 0.15s; }
   .workp.on .item { opacity: 1; transform: none; }
   .workp .item .n { color: var(--callout); }
   .workp .item .t { color: var(--hero-yellow); font-family: var(--display); font-size: 0.92em; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .workp .item .y { color: #a9bdb8; font-size: 0.8em; }
   .workp .item:hover, .workp .item.active, .workp .item:focus-visible { border-left-color: var(--callout); background: rgba(0, 255, 166, 0.1); outline: none; }
-  .workp .preview { position: absolute; right: 3%; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); width: min(46cqw, 760px, 100cqh); pointer-events: none; opacity: 0; transition: opacity 0.4s 0.3s; }
+  .workp .preview { position: absolute; right: 3%; top: calc(62px + var(--hero-size, 64px) * 2.15 + 18px); width: min(46cqw, 760px, calc((100cqh - (62px + var(--hero-size, 64px) * 2.15 + 18px) - 120px) * 1.6)); pointer-events: none; opacity: 0; transition: opacity 0.4s 0.3s; }   /* 高度受限，底边永远在 back 之上 */
   .workp.on .preview { opacity: 1; }
   .workp .preview .vf img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: #000; filter: contrast(1.06) saturate(1.05); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5); }
   .workp .preview .vf img.glitch { animation: pv-glitch 0.28s steps(3); }
@@ -1544,7 +1544,7 @@
     if (hs.spec.expand) { setHover(hs); expandCallout(hs); return; }
     if (zoomed || camAnim) return;
     var target = hotspots.filter(function (h) { return h.spec === HOTSPOTS[key] && h.camPoint; })[0];
-    if (target) { tv.updateMatrixWorld(true); zoomToHotspot(target, false); }
+    if (target) { tv.updateMatrixWorld(true); zoomToHotspot(target, true); }   // 从子页面回来直接落到位，不再飞一遍
   }
   setTimeout(openFromHash, 250);
   window.addEventListener('hashchange', openFromHash);
