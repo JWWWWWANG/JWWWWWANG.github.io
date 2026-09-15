@@ -1537,8 +1537,9 @@
   }
   container.addEventListener('pointerleave', function () { if (!pinned) setHover(null); });
   // 子页面导航回来时直接打开对应的场景面板：index.html#work / #about / #connect
-  function openFromHash() {
+  function openFromHash(atLoad) {
     var key = (location.hash.match(/^#(work|about|connect)$/) || [])[1]; if (!key) return;
+    if (atLoad) { container.classList.add('no-anim'); setTimeout(function () { container.classList.remove('no-anim'); }, 900); }   // 首次进入不做淡入，直接落到位
     var hs = hotspots.filter(function (h) { return h.spec === HOTSPOTS[key]; })[0]; if (!hs) return;
     history.replaceState(null, '', location.pathname + location.search);   // 清掉 hash，避免刷新时重复触发
     if (hs.spec.expand) { setHover(hs); expandCallout(hs); return; }
@@ -1546,8 +1547,7 @@
     var target = hotspots.filter(function (h) { return h.spec === HOTSPOTS[key] && h.camPoint; })[0];
     if (target) { tv.updateMatrixWorld(true); zoomToHotspot(target, true); }   // 从子页面回来直接落到位，不再飞一遍
   }
-  setTimeout(openFromHash, 250);
-  window.addEventListener('hashchange', openFromHash);
+  window.addEventListener('hashchange', function () { openFromHash(false); });
   var dbgZoom = (location.search.match(/zoom=(\w+)/) || [])[1];
   if (dbgZoom && /noanim=1/.test(location.search)) container.classList.add('no-anim');
   if (dbgZoom) setTimeout(function () { var hz = hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgZoom] && h.camPoint; })[0]; if (hz) { tv.updateMatrixWorld(true); zoomToHotspot(hz, true); } }, 50);
@@ -1690,6 +1690,16 @@
     renderer.setRenderTarget(null);
     renderer.render(finalScene, quadCam);
   }
+  // 浏览器后退从缓存恢复页面、或标签页切回来时，视频都会停在暂停状态，这里重新播放
+  function resumeVideos() {
+    var tp = function (v) { if (!v) return; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); };
+    if (filmVideo) tp(filmVideo);
+    if (activePanel === 'work-panel') tp(workVideo);
+    if (activePanel === 'about-panel') tp(aboutVideo);
+  }
+  window.addEventListener('pageshow', function (e) { if (e.persisted) resumeVideos(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) resumeVideos(); });
+  openFromHash(true);   // 带 #work / #about / #connect 进来时，第一帧渲染前镜头就已在目标位置
   tick();
 })();
 </script>
