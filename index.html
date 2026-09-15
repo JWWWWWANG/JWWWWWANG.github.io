@@ -113,7 +113,7 @@
     position: absolute;
     left: 0; top: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     color: var(--callout);
     font-family: var(--mono);
     font-size: 30px;
@@ -126,6 +126,7 @@
   .callout.on { opacity: 1; }
   .callout .dot {
     flex: none;
+    margin-top: calc(var(--lh, 48px) / 2 - 7px);
     width: 14px; height: 14px;
     border-radius: 50%;
     background: var(--callout);
@@ -134,24 +135,36 @@
   }
   .callout .line {
     flex: none;
+    margin-top: calc(var(--lh, 48px) / 2 - 2px);
     width: 0; height: 0;
     border-top: 3px dashed var(--callout);
     transition: width 0.35s steps(7);
   }
   .callout.on .line { width: 110px; }
-  .callout .label {
+  .callout .box {
     border: 3px dashed var(--callout);
+    opacity: 0;
+    transition: opacity 0.1s 0.3s;
+    background: rgba(2, 8, 10, 0.25);
+  }
+  .callout.on .box { opacity: 1; }
+  .callout .label {
+    display: block;
     padding: 6px 12px;
     white-space: pre;
     color: inherit;
     text-decoration: none;
     letter-spacing: 0.04em;
     text-shadow: 0 0 8px rgba(0, 255, 166, 0.6);
-    opacity: 0;
-    transition: opacity 0.1s 0.3s;
   }
-  .callout.on .label { opacity: 1; pointer-events: auto; cursor: pointer; }
+  .callout.on .label { pointer-events: auto; cursor: pointer; }
   .callout .label:hover { background: rgba(0, 255, 166, 0.14); }
+  /* 展开的链接：从虚线框底部推出来 */
+  .callout .links { display: grid; max-height: 0; overflow: hidden; transition: max-height 0.35s steps(6); }
+  .callout.open .links { max-height: 200px; }
+  .callout .links a { display: flex; align-items: center; gap: 0.5em; padding: 6px 12px; color: inherit; text-decoration: none; font-size: 0.8em; letter-spacing: 0.04em; border-top: 2px dashed rgba(0, 255, 166, 0.45); white-space: pre; pointer-events: auto; }
+  .callout .links a:hover { background: rgba(0, 255, 166, 0.14); }
+  .callout .links svg { width: 1em; height: 1em; flex: none; fill: none; stroke: var(--callout); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(0, 255, 166, 0.6)); }
   #tv-scene.hover-person { cursor: pointer; }
   #tv-scene.no-anim .callout, #tv-scene.no-anim .callout *, #tv-scene.no-anim .about, #tv-scene.no-anim .about *, #tv-scene.no-anim .workp, #tv-scene.no-anim .workp * { transition: none !important; animation: none !important; }
   @keyframes callout-pulse { 0% { opacity: 1; } 50% { opacity: 0.55; } 100% { opacity: 1; } }
@@ -288,7 +301,7 @@
       <p class="hero-sub">Portfolio website</p>
       <div class="about" id="about-panel"><div class="bio"><p style="transition-delay:0.35s">Jiawen is a multimedia artist studying at New York University.</p><p style="transition-delay:0.63s">Working across 3D animation, video art, analog visuals, projection mapping, and interactive installations, she creates dynamic works that challenge traditional boundaries of digital media.</p><p style="transition-delay:0.91s">Her practice emphasizes real-time audiovisual performance, synthesizing these diverse mediums to craft immersive experiences.</p><p style="transition-delay:1.19s">Her current works explore themes of distorted reality and urban isolation in our digital age. Through manipulated imagery and interactive elements, she visualizes how our identities and perceptions fragment under constant information streams, while examining the paradox of disconnection in an interconnected world.</p><p style="transition-delay:1.47s">Her pieces invite viewers to confront how their own experiences and sense of self transform through digital mediation.</p></div><div class="card"><div class="vf"><video id="about-video" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp">SP</span><span class="osd tc" id="about-tc">00:00:00:00</span></div><div class="film"><div class="holes"></div><div class="frame"><video id="about-video-film" src="assets/video/about.mp4" poster="assets/video/about-poster.jpg" muted loop playsinline preload="none"></video></div><div class="holes"></div><div class="edge"><span>JIAWEN WANG &middot; REEL 01</span><span>&#9656; <b id="about-frame">0000</b> &middot; 24 FPS</span></div></div></div><a class="close" href="#" id="about-close">&larr; back</a></div>
       <div class="workp" id="work-panel"><video class="bg" id="work-video" src="assets/video/index-loop.mp4" muted loop playsinline preload="none"></video><div class="shade"></div><nav class="list" aria-label="Work"><a class="item active" href="work/in-between.html" data-thumb="assets/work/thumbs/in-between.jpg" data-num="001" data-year="2025" data-tags="Installation / Interactive Art / Real-Time Render" style="transition-delay:0.25s"><span class="n">[001]</span><span class="t">In Between</span><span class="y">2025</span></a><a class="item" href="work/no-signal.html" data-thumb="assets/work/thumbs/no-signal.jpg" data-num="002" data-year="2025" data-tags="Audio-Visual / Interactive Art / Laser Show / Real-Time Render" style="transition-delay:0.30s"><span class="n">[002]</span><span class="t">No Signal</span><span class="y">2025</span></a><a class="item" href="work/heretic.html" data-thumb="assets/work/thumbs/heretic.jpg" data-num="003" data-year="2025" data-tags="Opera / Projection Mapping / Audio-Visual" style="transition-delay:0.35s"><span class="n">[003]</span><span class="t">Heretic</span><span class="y">2025</span></a><a class="item" href="work/word.html" data-thumb="assets/work/thumbs/word.jpg" data-num="004" data-year="2025" data-tags="Installation / Real-Time Rendering / Analog Video" style="transition-delay:0.40s"><span class="n">[004]</span><span class="t">Word</span><span class="y">2025</span></a><a class="item" href="work/reality-glitch.html" data-thumb="assets/work/thumbs/reality-glitch.jpg" data-num="005" data-year="2024" data-tags="Interactive Installation / Immersive Environment / Real-Time Rendering" style="transition-delay:0.45s"><span class="n">[005]</span><span class="t">Reality Glitch.V0</span><span class="y">2024</span></a><a class="item" href="work/digital-anomalies.html" data-thumb="assets/work/thumbs/digital-anomalies.jpg" data-num="006" data-year="2024" data-tags="AIGC / Video Art" style="transition-delay:0.50s"><span class="n">[006]</span><span class="t">Digital Anomalies</span><span class="y">2024</span></a><a class="item" href="work/get-out.html" data-thumb="assets/work/thumbs/get-out.jpg" data-num="007" data-year="2023" data-tags="3D Animation" style="transition-delay:0.55s"><span class="n">[007]</span><span class="t">Get Out!</span><span class="y">2023</span></a><a class="item" href="work/reborn.html" data-thumb="assets/work/thumbs/reborn.jpg" data-num="008" data-year="2024" data-tags="Audio-Visual / Video Art" style="transition-delay:0.60s"><span class="n">[008]</span><span class="t">Reborn</span><span class="y">2024</span></a><a class="item" href="work/control.html" data-thumb="assets/work/thumbs/control.jpg" data-num="009" data-year="2024" data-tags="Video Art" style="transition-delay:0.65s"><span class="n">[009]</span><span class="t">Control</span><span class="y">2024</span></a><a class="item" href="work/the-time-on-the-watch.html" data-thumb="assets/work/thumbs/the-time-on-the-watch.jpg" data-num="010" data-year="2024" data-tags="Film" style="transition-delay:0.70s"><span class="n">[010]</span><span class="t">The Time on the Watch</span><span class="y">2024</span></a><a class="item" href="work/epochs.html" data-thumb="assets/work/thumbs/epochs.jpg" data-num="011" data-year="2024" data-tags="AIGC" style="transition-delay:0.75s"><span class="n">[011]</span><span class="t">Epochs</span><span class="y">2024</span></a><a class="item" href="work/remembrance-and-forgotten.html" data-thumb="assets/work/thumbs/remembrance-and-forgotten.jpg" data-num="012" data-year="2024" data-tags="Photography" style="transition-delay:0.80s"><span class="n">[012]</span><span class="t">Remembrance and Forgotten</span><span class="y">2024</span></a><a class="item" href="work/city-surf.html" data-thumb="assets/work/thumbs/city-surf.jpg" data-num="013" data-year="2023" data-tags="Interactive Installation / Projection Mapping" style="transition-delay:0.85s"><span class="n">[013]</span><span class="t">City Surf</span><span class="y">2023</span></a></nav><div class="preview"><div class="vf"><img id="work-preview-img" src="assets/work/thumbs/in-between.jpg" alt="" draggable="false"><div class="scan"></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="osd rec">REC</span><span class="osd sp" id="work-preview-num">[001] &middot; 2025</span><span class="osd cap" id="work-preview-cap">Installation / Interactive Art / Real-Time Render</span></div></div><a class="close" href="#" id="work-close">&larr; back</a></div>
-      <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><a class="label" id="callout-label" href="#about">About me</a></div>
+      <div class="callout" id="callout"><span class="dot"></span><span class="line"></span><div class="box"><a class="label" id="callout-label" href="#about">About me</a><div class="links" id="callout-links"></div></div></div>
     </div>
 
 
@@ -314,7 +327,10 @@
   var GLOW = 1.35;                                  // 光源的辉光强度，0 关掉
   var HOTSPOTS = {                                  // 悬停时弹出的标注和跳转地址
     about: { text: 'About me', url: 'about.html', zoom: true, panel: 'about-panel', zoomOffset: { x: 0.3, y: 0.14 } },   // 人物：镜头推到脸前后在场景里打开 About 面板
-    connect: { text: 'Connect', url: 'connect.html' },  // 键盘
+    connect: { text: 'Connect', url: 'connect.html', expand: true, links: [   // 键盘：点击展开两行链接
+      { icon: 'ig', text: '@j.wang_art', url: 'https://www.instagram.com/j.wang_art/' },
+      { icon: 'mail', text: 'jw8118@nyu.edu', url: 'mailto:jw8118@nyu.edu' }
+    ] },
     work: { text: 'Work', url: 'work.html', zoom: true, panel: 'work-panel', zoomOffset: { x: 0, y: 0 } }   // 投影仪、幕布：镜头推到幕布前，背景变成幕布上的视频
   };
   var COLORS = {
@@ -575,7 +591,7 @@
     if (pr === 4 && pc === 1) continue;
     kbKey(xp + pc * U, zF + 0.3 + pr * U, (pr === 4 && pc === 0) ? 2 : 1);
   }
-  addHotspot(kb, [KW, 0.32, KD], [0, 0.16, 0], [-1.35, 0.3, -0.1], HOTSPOTS.connect);
+  addHotspot(kb, [KW, 0.32, KD], [0, 0.16, 0], [-1.35, 0.62, -0.4], HOTSPOTS.connect);
 
   // 螺旋线：从键盘左后方接到主机盒左前方
   kb.updateMatrixWorld(true);
@@ -1255,7 +1271,7 @@
     var off = h.spec.zoomOffset || { x: 0, y: 0 };
     var look = H.clone().sub(right.multiplyScalar(off.x)).add(new THREE.Vector3(0, off.y, 0));   // 视线偏移：About 让人物落在右下，Work 正对幕布
     zoomed = true;
-    setHover(null);
+    collapseCallout(); setHover(null);
     flyTo(P, look, instant ? 1 : 1400, function () {
       if (h.spec.panel) openPanel(h.spec.panel);                            // 有面板的热点：留在镜头视角里打开面板
       else if (!/^#/.test(h.spec.url)) window.location.assign(h.spec.url);
@@ -1411,12 +1427,41 @@
 
   // ---------- 悬停人物：射线检测 + ASCII 乱码解析动画 ----------
   var callout = document.getElementById('callout'), calloutLabel = document.getElementById('callout-label');
-  var activeHot = null, downX = 0, downY = 0;
+  var activeHot = null, downX = 0, downY = 0, pinned = false;
+  var calloutLinks = document.getElementById('callout-links');
+  var ICONS = {
+    ig: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'
+  };
+  function scrambleInto(el, text, dur) {
+    var t0 = performance.now();
+    (function step() {
+      var k = Math.min(1, (performance.now() - t0) / dur), n = Math.floor(k * (text.length + 1)), out = '';
+      for (var i = 0; i < text.length; i++) out += (i < n || text.charAt(i) === ' ') ? text.charAt(i) : SCRAMBLE.charAt(Math.floor(Math.random() * SCRAMBLE.length));
+      el.textContent = k >= 1 ? text : out;
+      if (k < 1) setTimeout(step, 70);
+    })();
+  }
+  function expandCallout(h) {
+    if (!calloutLinks || !h.spec.links) return;
+    pinned = true;
+    calloutLinks.innerHTML = '';
+    h.spec.links.forEach(function (l, i) {
+      var a = document.createElement('a'); a.href = l.url; if (!/^mailto:/.test(l.url)) { a.target = '_blank'; a.rel = 'noopener'; }
+      a.innerHTML = (ICONS[l.icon] || '') + '<span></span>';
+      a.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      calloutLinks.appendChild(a);
+      setTimeout(function () { scrambleInto(a.querySelector('span'), l.text, 500); }, 80 + i * 140);
+    });
+    callout.classList.add('open');
+  }
+  function collapseCallout() { pinned = false; callout.classList.remove('open'); }
   var lastHot = null;
   if (calloutLabel) calloutLabel.addEventListener('pointerdown', function (e) { e.stopPropagation(); downX = e.clientX; downY = e.clientY; if (!activeHot && lastHot) setHover(lastHot); });
   if (calloutLabel) calloutLabel.addEventListener('pointerover', function () { if (!activeHot && lastHot && calloutVisible) setHover(lastHot); });
   if (calloutLabel) calloutLabel.addEventListener('click', function (e) {
     var h = activeHot || lastHot;
+    if (h && h.spec.expand) { e.preventDefault(); if (pinned) { collapseCallout(); } else { if (!activeHot) setHover(h); expandCallout(h); } return; }
     if (h && h.spec.zoom && h.camPoint) { e.preventDefault(); if (!zoomed && !camAnim) zoomToHotspot(h, false); }   // 抬起时可能已经开始飞了，这里只拦截默认跳转
   });
   var raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2(), tmpV = new THREE.Vector3();
@@ -1424,12 +1469,14 @@
   var SCRAMBLE = '#%@&/\\|-=+*:;<>[]{}$';
   function setHover(hot) {
     if (hot === activeHot) return;
+    if (pinned && !hot) return;              // 展开期间鼠标移开不收起
+    if (pinned) collapseCallout();
     if (hot) { activeHot = hot; lastHot = hot; calloutAnchor = hot.anchor; if (calloutLabel) calloutLabel.setAttribute('href', hot.spec.url); }
     hoverOn = !!hot;
     if (!hot) { /* 移开时保留上一个热点的文字做消失动画 */ } 
     container.classList.toggle('hover-person', hoverOn);
     scrambleT0 = performance.now(); scrambleLast = 0;
-    if (hoverOn) { callout.classList.add('on'); calloutVisible = true; }
+    if (hoverOn) { callout.classList.add('on'); calloutVisible = true; if (calloutLabel) callout.style.setProperty('--lh', calloutLabel.offsetHeight + 'px'); }
     else activeHot = null;
   }
   var lastSpec = null;
@@ -1482,7 +1529,7 @@
     if (!hits.length && activeHot && nearHotspot(activeHot, clientX - r.left, clientY - r.top, 28, r)) return;   // 迟滞：离开一点点不丢
     setHover(hits.length ? hotspots[hits[0].object.userData.hotspotIndex] : null);
   }
-  container.addEventListener('pointerleave', function () { setHover(null); });
+  container.addEventListener('pointerleave', function () { if (!pinned) setHover(null); });
   var dbgZoom = (location.search.match(/zoom=(\w+)/) || [])[1];
   if (dbgZoom && /noanim=1/.test(location.search)) container.classList.add('no-anim');
   if (dbgZoom) setTimeout(function () { var hz = hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgZoom] && h.camPoint; })[0]; if (hz) { tv.updateMatrixWorld(true); zoomToHotspot(hz, true); } }, 50);
@@ -1503,7 +1550,7 @@
     setTimeout(function () { console.info('dbgclick after: zoomed=' + zoomed + ' anim=' + !!camAnim + ' activeHot=' + (activeHot ? activeHot.spec.text : 'null')); }, 100);
   }, 1500);
   var dbgHover = (location.search.match(/hover=(\w+)/) || [])[1];
-  if (dbgHover) { container.classList.add('no-anim'); setHover(hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgHover]; })[0] || hotspots[0]); scrambleT0 = -1e9; }
+  if (dbgHover) { container.classList.add('no-anim'); var hh = hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgHover]; })[0] || hotspots[0]; setHover(hh); scrambleT0 = -1e9; if (/open=1/.test(location.search) && hh.spec.expand) setTimeout(function () { expandCallout(hh); }, 200); }
   function endDrag() { dragging = false; container.classList.remove('dragging'); }
   container.addEventListener('pointerup', function (e) {
     endDrag();
@@ -1512,9 +1559,10 @@
       if (zoomed) { if (!camAnim) flyHome(); return; }
       testHover(e.clientX, e.clientY);
       if (activeHot) {
-        if (activeHot.spec.zoom && activeHot.camPoint) zoomToHotspot(activeHot, false);
+        if (activeHot.spec.expand) { if (!pinned) expandCallout(activeHot); }
+        else if (activeHot.spec.zoom && activeHot.camPoint) zoomToHotspot(activeHot, false);
         else window.location.assign(activeHot.spec.url);
-      }
+      } else if (pinned) { collapseCallout(); setHover(null); }   // 点空白处收起
     }
   });
   container.addEventListener('pointercancel', endDrag);
@@ -1607,7 +1655,7 @@
     if (calloutVisible && calloutAnchor) {
       calloutAnchor.getWorldPosition(tmpV).project(camera);
       var cw = container.clientWidth, ch = container.clientHeight;
-      callout.style.transform = 'translate(' + ((tmpV.x * 0.5 + 0.5) * cw - 7).toFixed(1) + 'px, ' + ((-tmpV.y * 0.5 + 0.5) * ch).toFixed(1) + 'px) translateY(-50%)';
+      callout.style.transform = 'translate(' + ((tmpV.x * 0.5 + 0.5) * cw - 7).toFixed(1) + 'px, ' + ((-tmpV.y * 0.5 + 0.5) * ch).toFixed(1) + 'px) translateY(calc(var(--lh, 48px) / -2))';
       updateCalloutText(now);
     }
 
