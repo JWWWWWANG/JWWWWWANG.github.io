@@ -837,7 +837,7 @@
   for (var vs = 0; vs < 7; vs++) box(pj, 0.018, 0.06, 0.008, mats.trim, -0.15 + vs * 0.03, -0.08, 0.152, false);   // 正面散热缝
   var pjLed = box(pj, 0.015, 0.008, 0.008, new THREE.MeshBasicMaterial({ color: 0x4fa3ff }), 0.1, -0.11, 0.152, false);
   pjLed.userData.glowMat = pjLed.material;
-  var pjHot = addHotspot(pj, [0.44, 0.32, 0.36], [0, -0.09, 0], [0.05, 0.02, 0.1], HOTSPOTS.work);
+  var pjHot = addHotspot(pj, [0.62, 0.5, 0.55], [0, -0.06, 0], [0.05, 0.02, 0.1], HOTSPOTS.work);
   pjHot.camPoint = screenHot.camPoint; pjHot.flyLook = screenHot.flyLook;   // 点投影仪也飞到幕布前
   // 对准幕布中心：机身的"前方"是局部 +x，先绕 z 俯仰再绕 y 转向
   var pjDir = scrC.clone().sub(pj.position.clone().add(lensLocal)).normalize();
@@ -965,7 +965,7 @@
   hair.position.set(0, seatTop + 0.51, 0.04);
   hair.rotation.x = 0.7;
   person.add(hair);
-  addHotspot(person, [0.38, 0.98, 0.58], [0, seatTop + 0.3, -0.08], [0, seatTop + 0.5, 0.03], HOTSPOTS.about, 0, [0, seatTop + 0.56, -1.15]);
+  addHotspot(person, [0.62, 1.15, 0.8], [0, seatTop + 0.32, -0.1], [0, seatTop + 0.5, 0.03], HOTSPOTS.about, 0, [0, seatTop + 0.56, -1.15]);
 
   // 猫：蜷在另一个坐垫上
   var cat = new THREE.Group();
@@ -1444,6 +1444,17 @@
     calloutLabel.textContent = hoverOn && k >= 1 ? full : out;
     if (!hoverOn && k >= 1) { callout.classList.remove('on'); calloutVisible = false; }
   }
+  var cornerV = new THREE.Vector3();
+  function nearHotspot(h, px, py, pad, r) {
+    var g = h.hit.geometry; if (!g.boundingBox) g.computeBoundingBox();
+    var bb = g.boundingBox, minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+    for (var i = 0; i < 8; i++) {
+      cornerV.set(i & 1 ? bb.max.x : bb.min.x, i & 2 ? bb.max.y : bb.min.y, i & 4 ? bb.max.z : bb.min.z).applyMatrix4(h.hit.matrixWorld).project(camera);
+      var sx = (cornerV.x * 0.5 + 0.5) * r.width, sy = (-cornerV.y * 0.5 + 0.5) * r.height;
+      minX = Math.min(minX, sx); maxX = Math.max(maxX, sx); minY = Math.min(minY, sy); maxY = Math.max(maxY, sy);
+    }
+    return px >= minX - pad && px <= maxX + pad && py >= minY - pad && py <= maxY + pad;
+  }
   function testHover(clientX, clientY) {
     if (zoomed || camAnim) { setHover(null); return; }
     // 鼠标在当前标注（圆点、虚线、文字框）范围内时保持热点，免得移向文字时打到别的热点
@@ -1455,19 +1466,29 @@
     ndc.set(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
     raycaster.setFromCamera(ndc, camera);
     var hits = raycaster.intersectObjects(hitMeshes, false);
+    if (!hits.length && activeHot && nearHotspot(activeHot, clientX - r.left, clientY - r.top, 28, r)) return;   // 迟滞：离开一点点不丢
     setHover(hits.length ? hotspots[hits[0].object.userData.hotspotIndex] : null);
   }
   container.addEventListener('pointerleave', function () { setHover(null); });
   var dbgZoom = (location.search.match(/zoom=(\w+)/) || [])[1];
   if (dbgZoom && /noanim=1/.test(location.search)) container.classList.add('no-anim');
   if (dbgZoom) setTimeout(function () { var hz = hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgZoom] && h.camPoint; })[0]; if (hz) { tv.updateMatrixWorld(true); zoomToHotspot(hz, true); } }, 50);
+  if (/dbghit=1/.test(location.search)) setTimeout(function () {
+    var r = container.getBoundingClientRect(), counts = {}, boxes = {};
+    for (var yy = 0; yy < r.height; yy += 12) for (var xx = 0; xx < r.width; xx += 12) {
+      ndc.set((xx / r.width) * 2 - 1, -(yy / r.height) * 2 + 1); raycaster.setFromCamera(ndc, camera);
+      var hits = raycaster.intersectObjects(hitMeshes, false);
+      if (hits.length) { var k = hotspots[hits[0].object.userData.hotspotIndex].spec.text; counts[k] = (counts[k] || 0) + 1; var b = boxes[k] || (boxes[k] = [1e9, 1e9, -1e9, -1e9]); b[0] = Math.min(b[0], xx); b[1] = Math.min(b[1], yy); b[2] = Math.max(b[2], xx); b[3] = Math.max(b[3], yy); }
+    }
+    console.info('hitscan ' + JSON.stringify({ size: [Math.round(r.width), Math.round(r.height)], cells: counts, boxes: boxes, zoomed: zoomed, anim: !!camAnim }));
+  }, 1500);
   var dbgHover = (location.search.match(/hover=(\w+)/) || [])[1];
   if (dbgHover) { container.classList.add('no-anim'); setHover(hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgHover]; })[0] || hotspots[0]); scrambleT0 = -1e9; }
   function endDrag() { dragging = false; container.classList.remove('dragging'); }
   container.addEventListener('pointerup', function (e) {
     endDrag();
     // 没拖动、且点在人物上：直接跳转（鼠标和触屏都一样）
-    if (Math.abs(e.clientX - downX) < 6 && Math.abs(e.clientY - downY) < 6) {
+    if (Math.abs(e.clientX - downX) < 10 && Math.abs(e.clientY - downY) < 10) {
       if (zoomed) { if (!camAnim) flyHome(); return; }
       testHover(e.clientX, e.clientY);
       if (activeHot) {
