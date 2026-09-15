@@ -1224,7 +1224,6 @@
   var rotX = /tilt=/.test(qs) ? parseFloat(qs.match(/tilt=([-\d.]+)/)[1]) : 0.04;
   var velY = 0, velX = 0;
   var dragging = false, lastX = 0, lastY = 0, lastInteract = -1e9;
-  var downX = 0, downY = 0;
   container.addEventListener('pointerdown', function (e) {
     downX = e.clientX; downY = e.clientY;
     if (zoomed || camAnim) return;
@@ -1412,15 +1411,20 @@
 
   // ---------- 悬停人物：射线检测 + ASCII 乱码解析动画 ----------
   var callout = document.getElementById('callout'), calloutLabel = document.getElementById('callout-label');
-  var activeHot = null;
-  if (calloutLabel) calloutLabel.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
-  if (calloutLabel) calloutLabel.addEventListener('click', function (e) { if (activeHot && activeHot.spec.zoom && activeHot.camPoint) { e.preventDefault(); zoomToHotspot(activeHot, false); } });
+  var activeHot = null, downX = 0, downY = 0;
+  var lastHot = null;
+  if (calloutLabel) calloutLabel.addEventListener('pointerdown', function (e) { e.stopPropagation(); downX = e.clientX; downY = e.clientY; if (!activeHot && lastHot) setHover(lastHot); });
+  if (calloutLabel) calloutLabel.addEventListener('pointerover', function () { if (!activeHot && lastHot && calloutVisible) setHover(lastHot); });
+  if (calloutLabel) calloutLabel.addEventListener('click', function (e) {
+    var h = activeHot || lastHot;
+    if (h && h.spec.zoom && h.camPoint) { e.preventDefault(); if (!zoomed && !camAnim) zoomToHotspot(h, false); }   // 抬起时可能已经开始飞了，这里只拦截默认跳转
+  });
   var raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2(), tmpV = new THREE.Vector3();
   var hoverOn = false, calloutVisible = false, scrambleT0 = 0, scrambleLast = 0, calloutAnchor = null;
   var SCRAMBLE = '#%@&/\\|-=+*:;<>[]{}$';
   function setHover(hot) {
     if (hot === activeHot) return;
-    if (hot) { activeHot = hot; calloutAnchor = hot.anchor; if (calloutLabel) calloutLabel.setAttribute('href', hot.spec.url); }
+    if (hot) { activeHot = hot; lastHot = hot; calloutAnchor = hot.anchor; if (calloutLabel) calloutLabel.setAttribute('href', hot.spec.url); }
     hoverOn = !!hot;
     if (!hot) { /* 移开时保留上一个热点的文字做消失动画 */ } 
     container.classList.toggle('hover-person', hoverOn);
@@ -1445,7 +1449,7 @@
     if (!hoverOn && k >= 1) { callout.classList.remove('on'); calloutVisible = false; }
   }
   var cornerV = new THREE.Vector3();
-  function nearHotspot(h, px, py, pad, r) {
+  function hotspotRect(h, r) {
     var g = h.hit.geometry; if (!g.boundingBox) g.computeBoundingBox();
     var bb = g.boundingBox, minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
     for (var i = 0; i < 8; i++) {
@@ -1453,7 +1457,16 @@
       var sx = (cornerV.x * 0.5 + 0.5) * r.width, sy = (-cornerV.y * 0.5 + 0.5) * r.height;
       minX = Math.min(minX, sx); maxX = Math.max(maxX, sx); minY = Math.min(minY, sy); maxY = Math.max(maxY, sy);
     }
-    return px >= minX - pad && px <= maxX + pad && py >= minY - pad && py <= maxY + pad;
+    return { l: minX, t: minY, r: maxX, b: maxY };
+  }
+  function nearHotspot(h, px, py, pad, r) {
+    var hr = hotspotRect(h, r);
+    // 保持区域 = 热点的投影矩形 和 标注矩形 的并集，鼠标从物体移到文字的一路上都不丢
+    if (calloutVisible) {
+      var cr = callout.getBoundingClientRect();
+      hr = { l: Math.min(hr.l, cr.left - r.left), t: Math.min(hr.t, cr.top - r.top), r: Math.max(hr.r, cr.right - r.left), b: Math.max(hr.b, cr.bottom - r.top) };
+    }
+    return px >= hr.l - pad && px <= hr.r + pad && py >= hr.t - pad && py <= hr.b + pad;
   }
   function testHover(clientX, clientY) {
     if (zoomed || camAnim) { setHover(null); return; }
@@ -1481,6 +1494,13 @@
       if (hits.length) { var k = hotspots[hits[0].object.userData.hotspotIndex].spec.text; counts[k] = (counts[k] || 0) + 1; var b = boxes[k] || (boxes[k] = [1e9, 1e9, -1e9, -1e9]); b[0] = Math.min(b[0], xx); b[1] = Math.min(b[1], yy); b[2] = Math.max(b[2], xx); b[3] = Math.max(b[3], yy); }
     }
     console.info('hitscan ' + JSON.stringify({ size: [Math.round(r.width), Math.round(r.height)], cells: counts, boxes: boxes, zoomed: zoomed, anim: !!camAnim }));
+  }, 1500);
+  if (/dbgclick=1/.test(location.search)) setTimeout(function () {
+    var lab = calloutLabel, r = lab.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var el = document.elementFromPoint(cx, cy);
+    console.info('dbgclick label rect=' + Math.round(r.left) + ',' + Math.round(r.top) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' elementFromPoint=' + (el ? el.tagName + '.' + el.className : 'none') + ' pe=' + getComputedStyle(lab).pointerEvents + ' activeHot=' + (activeHot ? activeHot.spec.text : 'null'));
+    ['pointerdown', 'pointerup', 'click'].forEach(function (t) { el.dispatchEvent(new PointerEvent(t, { bubbles: true, cancelable: true, clientX: cx, clientY: cy, pointerId: 1, pointerType: 'mouse', isPrimary: true })); });
+    setTimeout(function () { console.info('dbgclick after: zoomed=' + zoomed + ' anim=' + !!camAnim + ' activeHot=' + (activeHot ? activeHot.spec.text : 'null')); }, 100);
   }, 1500);
   var dbgHover = (location.search.match(/hover=(\w+)/) || [])[1];
   if (dbgHover) { container.classList.add('no-anim'); setHover(hotspots.filter(function (h) { return h.spec === HOTSPOTS[dbgHover]; })[0] || hotspots[0]); scrambleT0 = -1e9; }
